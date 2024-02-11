@@ -31,4 +31,36 @@ tax_data.isnull().sum()
 onlinesales_data.isnull().sum()
 # 결측치는 없는 걸로 확인 된다
 
-# 세금에 따른 주문 수량 확인
+# 'Transaction_Date' 컬럼을 날짜 타입으로 변환하고 월별로 집계
+# 'Month' 컬럼으로 거래량 계산
+counts_by_month = onlinesales_data.assign(Month=pd.to_datetime(onlinesales_data['거래날짜']).dt.to_period('M'))['Month'].value_counts().sort_index()
+
+# 시간에 따른 거래량 선 그래프 그리기
+plt.figure(figsize=(15, 6))
+sns.lineplot(x=counts_by_month.index.astype(str), y=counts_by_month.values)
+plt.title('시간에 따른 거래량')
+plt.xlabel('월')
+plt.ylabel('거래량')
+plt.xticks(rotation=45)
+plt.show()
+
+gender_counts = customer_data['성별'].value_counts()
+
+# 원그래프 그리기
+plt.figure(figsize=(8, 8))  # 그래프 크기 설정
+plt.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%', startangle=140)  # 원그래프 그리기
+plt.title('성별 시각화')  # 그래프 제목 설정
+plt.show()  # 그래프 보여주기
+
+
+# customers_data에서 '고객지역' 열을 사용하여 지역별 거래량 계산
+location_counts = customer_data['고객지역'].value_counts()
+
+# 바 그래프 그리기
+plt.figure(figsize=(10, 6))  # 그래프 크기 설정
+sns.barplot(x=location_counts.index, y=location_counts.values)  # seaborn을 사용한 바 그래프 그리기
+plt.title('고객 지역 시각화')  # 그래프 제목 설정
+plt.xlabel('고객지역')  # x축 레이블 설정
+plt.xticks(rotation=45)  # x축 레이블 회전
+plt.show()  # 그래프 보여주기
+
